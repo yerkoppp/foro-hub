@@ -1,6 +1,7 @@
 package dev.ycosorio.forohub.domain.topico;
 
 import dev.ycosorio.forohub.domain.curso.Curso;
+import dev.ycosorio.forohub.domain.respuesta.Respuesta;
 import dev.ycosorio.forohub.domain.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -38,6 +41,8 @@ public class Topico {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_curso")
     private Curso curso;
+    @OneToMany(mappedBy = "topico", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Respuesta> respuestas = new ArrayList<>();
 
     public Topico(DatosCrearTopico datos, Usuario autor, Curso curso) {
         this.titulo = datos.titulo();

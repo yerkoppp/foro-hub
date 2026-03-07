@@ -1,7 +1,8 @@
 package dev.ycosorio.forohub.controller;
 
-import dev.ycosorio.forohub.domain.curso.Curso;
 import dev.ycosorio.forohub.domain.curso.CursoRepository;
+import dev.ycosorio.forohub.domain.respuesta.DatosDetalleRespuesta;
+import dev.ycosorio.forohub.domain.respuesta.RespuestaRepository;
 import dev.ycosorio.forohub.domain.topico.*;
 import dev.ycosorio.forohub.domain.usuario.Usuario;
 import dev.ycosorio.forohub.domain.usuario.UsuarioRepository;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/topicos")
 public class TopicoController {
@@ -26,6 +29,9 @@ public class TopicoController {
     private CursoRepository cursoRepository;
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private RespuestaRepository respuestaRepository;
 
 
     @Transactional
@@ -81,6 +87,19 @@ public class TopicoController {
         topicoRepository.deleteById(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/respuestas")
+    public ResponseEntity<List<DatosDetalleRespuesta>> listarRespuestasPorTopico(@PathVariable Long id) {
+        if (!topicoRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        var topico = topicoRepository.getReferenceById(id);
+        var respuestas = topico.getRespuestas().stream()
+                .map(DatosDetalleRespuesta::new)
+                .toList();
+
+        return ResponseEntity.ok(respuestas);
     }
 
 
