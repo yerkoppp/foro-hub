@@ -9,8 +9,5 @@ public record DatosCrearTopico(
         String titulo,
         @NotBlank (message = "mensaje.obligatorio")
         String mensaje,
-        /*@NotNull
-        Estado status,*/
-        @NotNull Long idAutor,
         @NotNull Long idCurso
 ) {}

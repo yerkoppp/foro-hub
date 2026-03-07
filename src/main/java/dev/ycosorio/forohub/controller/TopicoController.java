@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -31,9 +32,10 @@ public class TopicoController {
     @PostMapping
     public ResponseEntity registrar(
             @RequestBody @Valid DatosCrearTopico datos,
-            UriComponentsBuilder uriComponentsBuilder){
+            UriComponentsBuilder uriComponentsBuilder,
+            Authentication authentication){
 
-        var autor = usuarioRepository.getReferenceById(datos.idAutor());
+        var autor = (Usuario) authentication.getPrincipal();
         var curso = cursoRepository.getReferenceById(datos.idCurso());
 
         var topico = new Topico(datos, autor, curso);
