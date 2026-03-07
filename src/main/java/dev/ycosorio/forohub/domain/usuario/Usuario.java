@@ -29,6 +29,12 @@ public class Usuario implements UserDetails {
     private String email;
     private String contrasena;
 
+    public Usuario(String nombre, String email, String contrasena) {
+        this.nombre = nombre;
+        this.email = email;
+        this.contrasena = contrasena;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
