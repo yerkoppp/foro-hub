@@ -1,10 +1,12 @@
 package dev.ycosorio.forohub.domain.topico;
 
 import dev.ycosorio.forohub.domain.curso.DatosDetalleCurso;
+import dev.ycosorio.forohub.domain.respuesta.DatosDetalleRespuesta;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record DatosDetalleTopico(
         Long id,
@@ -12,8 +14,9 @@ public record DatosDetalleTopico(
         String mensaje,
         LocalDateTime fechaCreacion,
         Estado status,
-        Long idAutor,
-        DatosDetalleCurso curso // <-- Aquí está el cambio "fluido"
+        String autor,
+        DatosDetalleCurso curso,
+        List<DatosDetalleRespuesta> respuestas
 ) {
     public DatosDetalleTopico(Topico topico) {
         this(
@@ -22,8 +25,11 @@ public record DatosDetalleTopico(
                 topico.getMensaje(),
                 topico.getFechaCreacion(),
                 topico.getStatus(),
-                topico.getAutor().getId(),
-                new DatosDetalleCurso(topico.getCurso())
+                topico.getAutor().getNombre(),
+                new DatosDetalleCurso(topico.getCurso()),
+                topico.getRespuestas().stream()
+                        .map(DatosDetalleRespuesta::new)
+                        .toList()
         );
     }
 }

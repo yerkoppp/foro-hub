@@ -8,6 +8,7 @@ import dev.ycosorio.forohub.domain.respuesta.Respuesta;
 import dev.ycosorio.forohub.domain.usuario.Usuario;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,11 @@ public class RespuestaController {
     public ResponseEntity registrar(
             @RequestBody @Valid DatosRegistroRespuesta datos,
             Authentication authentication) {
+        // Validamos primero si el tópico existe de verdad
+        if (!topicoRepository.existsById(datos.idTopico())) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Error: El tópico con ID " + datos.idTopico() + " no existe.");
+        }
         var usuario = (Usuario) authentication.getPrincipal();
         var topico = topicoRepository.getReferenceById(datos.idTopico());
 
