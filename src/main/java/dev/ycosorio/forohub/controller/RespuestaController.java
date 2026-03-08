@@ -3,6 +3,7 @@ package dev.ycosorio.forohub.controller;
 import dev.ycosorio.forohub.domain.respuesta.DatosDetalleRespuesta;
 import dev.ycosorio.forohub.domain.respuesta.DatosRegistroRespuesta;
 import dev.ycosorio.forohub.domain.respuesta.RespuestaRepository;
+import dev.ycosorio.forohub.domain.topico.Estado;
 import dev.ycosorio.forohub.domain.topico.TopicoRepository;
 import dev.ycosorio.forohub.domain.respuesta.Respuesta;
 import dev.ycosorio.forohub.domain.usuario.Usuario;
@@ -12,10 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/respuestas")
@@ -41,6 +39,28 @@ public class RespuestaController {
 
         var respuesta = new Respuesta(datos.mensaje(), topico, usuario);
         respuestaRepository.save(respuesta);
+
+        return ResponseEntity.ok(new DatosDetalleRespuesta(respuesta));
+    }
+
+    @PutMapping("/{id}/solucion")
+    @Transactional
+    public ResponseEntity marcarComoSolucion(@PathVariable Long id, Authentication authentication) {
+
+        if (!respuestaRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var respuesta = respuestaRepository.getReferenceById(id);
+        var usuarioLogueado = (Usuario) authentication.getPrincipal();
+
+        // Regla de negocio: Solo el autor del tópico puede marcar la solución
+        if (!respuesta.getTopico().getAutor().equals(usuarioLogueado)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Solo el autor del tópico puede marcar la solución.");
+        }
+
+        respuesta.setSolucion(true);
+        respuesta.getTopico().setStatus(Estado.SOLUCIONADO);
 
         return ResponseEntity.ok(new DatosDetalleRespuesta(respuesta));
     }

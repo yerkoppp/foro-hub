@@ -61,4 +61,8 @@ public class Topico {
             this.mensaje = datos.mensaje();
         }
     }
+
+    public void setStatus(Estado status) {
+        this.status = status;
+    }
 }

@@ -34,4 +34,8 @@ public class Respuesta {
         this.topico = topico;
         this.autor = autor;
     }
+
+    public void setSolucion(boolean solucion) {
+        this.solucion = solucion;
+    }
 }
