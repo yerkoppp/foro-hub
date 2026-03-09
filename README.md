@@ -118,6 +118,33 @@ Nota: El sistema valida que no existan duplicados con el mismo título y mensaje
 * **Seguridad**: Los endpoints privados requieren el envío del Token JWT obtenido en el login.
 
 ---
+## ⚠️ Gestión de Errores y Estados HTTP
+
+La API implementa un control de excepciones centralizado para garantizar respuestas estandarizadas en formato JSON.
+
+| Código HTTP | Escenario | Respuesta JSON |
+| :--- | :--- | :--- |
+| **400 Bad Request** | Datos de entrada inválidos o faltantes. | Lista de campos con sus errores de validación. |
+| **403 Forbidden** | Token JWT ausente, inválido o expirado. | `{"error": "Acceso denegado..."}` |
+| **404 Not Found** | El ID del recurso (Tópico/Respuesta) no existe. | Cuerpo vacío o mensaje de recurso no encontrado. |
+| **409 Conflict** | Intento de registrar un tópico duplicado. | Mensaje de error de integridad de datos. |
+
+### Ejemplo de Error de Validación (400)
+`JSON`
+````
+  {
+    "campo": "titulo",
+    "mensaje": "no debe estar vacío"
+  }
+````
+### Ejemplo de Error de Seguridad (403)
+`JSON`
+````
+{
+"error": "Acceso denegado. Token inválido, expirado o inexistente."
+}
+````
+---
 
 # ✨ Características Adicionales
 * **Listado de Respuestas Dinámico:** Al consultar un tópico, obtienes automáticamente todas las respuestas asociadas gracias a la implementación de DTOs anidados.
